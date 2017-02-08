@@ -1,5 +1,5 @@
 # Olympic Medals Screen App
-Requires node > v.6.9
+`node --version v.6.9.5`
 
 install
 

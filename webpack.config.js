@@ -67,7 +67,7 @@ const common = {
   plugins: [
     new HtmlWebpackPlugin({
       template: require('html-webpack-template'),
-      title: 'APP',
+      title: '2008 Olympic Medals',
       appMountId: 'app',
       inject: false
     })
