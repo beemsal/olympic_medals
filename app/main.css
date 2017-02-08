@@ -1,0 +1,40 @@
+@import url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
+
+#medal-list {
+    margin: 20px 50px;
+    max-width: 60%;
+}
+
+#medal-list .title {
+    margin: 7px 0 30px 0;
+}
+
+.medal {
+    width: 20px;
+    height: 20px;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    float: left;
+}
+
+.medal.gold {
+    background: gold;
+}
+
+.medal.silver {
+    background: silver;
+}
+
+.medal.bronze {
+    background: saddlebrown;
+}
+
+.medal-filter {
+    padding: 0px 0px 15px 0;
+    margin-left: 20px;
+}
+
+.medal-label {
+    padding-left: 10px;
+}
