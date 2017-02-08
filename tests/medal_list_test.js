@@ -7,7 +7,7 @@ import {
 } from '../app/MedalListContainer';
 import MedalList from '../app/MedalList';
 
-describe('MedalListContainer', function() {
+describe('MedalList', function() {
 
   const MEDAL_DETAILS = [
     {
