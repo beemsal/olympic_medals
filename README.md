@@ -9,9 +9,7 @@ start dev mode
 
 ```npm start```
 
-served at
-
-```http:\/\/localhost:8080```
+served at `http://localhost:8080`
 
 run test:
 
