@@ -11,7 +11,7 @@ start dev mode
 
 served at
 
-```http://localhost:8080```
+```http:\/\/localhost:8080```
 
 run test:
 
