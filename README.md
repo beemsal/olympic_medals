@@ -11,6 +11,10 @@ start dev mode
 
 served at `http://localhost:8080`
 
+change dev server port number here:
+
+https://github.com/beemsal/olympic_medals/blob/master/webpack.config.js#L114
+
 run test:
 
 ```npm test```
@@ -18,3 +22,7 @@ run test:
 run test in interactive mode
 
 ```npm run test:tdd```
+
+build static assets
+
+```npm build```
