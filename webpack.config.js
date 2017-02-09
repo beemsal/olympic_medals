@@ -3,10 +3,18 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const validate = require('webpack-validator');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const extractCSS = new ExtractTextPlugin('[name].[chunkhash].css');
+const extractJSON = new ExtractTextPlugin('olympics_2008_medalists.json');
 
 const TARGET = process.env.npm_lifecycle_event;
+const stylePath = path.join(__dirname, 'app', 'main.css');
+const appPath = path.join(__dirname, 'app');
+const buildPath = path.join(__dirname, 'build');
 
-function babelLoad(target) {
+function configSwitch(target) {
+
   const module = {
     module: {}
   };
@@ -20,7 +28,7 @@ function babelLoad(target) {
             test: /\.(js|jsx)$/,
             loaders: ['babel-loader?cacheDirectory'],
             include: [
-              path.join(__dirname, 'app'),
+              appPath,
               path.join(__dirname, 'test')
             ]
           }
@@ -29,24 +37,81 @@ function babelLoad(target) {
 
       break;
 
+    case 'build':
+      module.module = {
+        use: [
+          {
+            test: /\.(js|jsx)$/,
+            use: ['babel-loader?cacheDirectory', 'eslint-loader'],
+            include: appPath
+          },
+          // json src file
+          {
+            test: /\.json$/,
+            use: extractJSON.extract({ use: 'file-loader' }),
+            include: path.join(__dirname, 'public')
+          },
+          // Extract CSS during build
+          {
+            test: /\.css$/,
+            use: extractCSS.extract({ fallback: 'style-loader', use: 'css-loader' }),
+            include: stylePath
+          }
+        ]
+      };
+
+      module.entry = {
+        style: stylePath,
+        vendor: [
+          'react', 'react-dom'
+        ]
+      };
+
+      module.plugins = [
+        new CleanWebpackPlugin([buildPath], {
+          root: process.cwd()
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+          names: ['vendor', 'manifest'],
+
+          // options.name modules only
+          minChunks: Infinity
+        }),
+        // Output extracted CSS to a file
+        extractCSS,
+        extractJSON
+      ]
+
+      module.output = {
+        path: path.join(__dirname, 'build'),
+        filename: '[name].[chunkhash].js',
+        chunkFilename: '[chunkhash].js'
+      }
+
     default:
       module.module = {
         loaders: [
           {
             test: /\.(js|jsx)$/,
             loaders: ['babel-loader?cacheDirectory', 'eslint-loader'],
-            include: path.join(__dirname, 'app')
+            include: appPath
           },
           {
             test: /\.css$/,
             loaders: ['style-loader', 'css-loader'],
-            include: path.join(__dirname, 'app')
+            include: appPath
           }
         ]
       };
 
       module.entry = {
-        style: path.join(__dirname, 'app', 'main.css')
+        style: stylePath
+      };
+
+      module.devServer = {
+        contentBase: path.join(__dirname, "public"),
+        // host: 'localhost',
+        port: 9000
       };
   }
 
@@ -58,7 +123,7 @@ const common = {
     app: './app/index.jsx'
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: buildPath,
     filename: '[name].js'
   },
   resolve: {
@@ -75,13 +140,10 @@ const common = {
   stats: {
     colors: true
   },
-  devServer: {
-    contentBase: path.join(__dirname, "public")
-  },
   devtool: 'source-map'
 };
 
-const config = merge(common, babelLoad(TARGET));
+const config = merge(common, configSwitch(TARGET));
 
 module.exports = validate(config, {
   quiet: true
