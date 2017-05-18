@@ -36,15 +36,15 @@
     "phantomjs-polyfill": "0.0.2",
     "phantomjs-prebuilt": "^2.1.14",
     "style-loader": "^0.13.1",
-    "webpack": "^2.2.1",
+    "webpack": "^2.5.1",
     "webpack-dev-server": "^2.3.0",
-    "webpack-merge": "^2.6.1",
-    "webpack-validator": "^2.3.0"
+    "webpack-merge": "^2.6.1"
   },
   "dependencies": {
     "es6-promise": "^4.0.5",
     "isomorphic-fetch": "^2.2.1",
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "sass-loader": "^6.0.5"
   }
 }

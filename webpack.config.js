@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-const validate = require('webpack-validator');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -9,7 +8,7 @@ const extractCSS = new ExtractTextPlugin('[name].[chunkhash].css');
 const extractJSON = new ExtractTextPlugin('olympics_2008_medalists.json');
 
 const TARGET = process.env.npm_lifecycle_event;
-const stylePath = path.join(__dirname, 'app', 'main.css');
+const stylePath = path.join(__dirname, 'app', 'main.scss');
 const appPath = path.join(__dirname, 'app');
 const buildPath = path.join(__dirname, 'build');
 
@@ -23,17 +22,13 @@ function configSwitch(target) {
     case 'test':
     case 'test:tdd':
       module.module = {
-        loaders: [
-          {
-            test: /\.(js|jsx)$/,
-            loaders: ['babel-loader?cacheDirectory'],
-            include: [
-              appPath,
-              path.join(__dirname, 'test')
-            ]
-          }
-        ]
-      };
+        rules: [{
+          test: /\.(js|jsx)$/,
+          use: [{
+            loader: 'babel-loader?cacheDirectory'
+          }]
+        }]
+      }
 
       break;
 
@@ -53,15 +48,13 @@ function configSwitch(target) {
           },
           // Extract CSS during build
           {
-            test: /\.css$/,
-            use: extractCSS.extract({ fallback: 'style-loader', use: 'css-loader' }),
-            include: stylePath
+            test: /\.scss$/,
+            use: extractCSS.extract({ fallback: 'style-loader', use: 'css-loader' })
           }
         ]
       };
 
       module.entry = {
-        style: stylePath,
         vendor: [
           'react', 'react-dom'
         ]
@@ -90,22 +83,23 @@ function configSwitch(target) {
 
     default:
       module.module = {
-        loaders: [
-          {
-            test: /\.(js|jsx)$/,
-            loaders: ['babel-loader?cacheDirectory', 'eslint-loader'],
-            include: appPath
-          },
-          {
-            test: /\.css$/,
-            loaders: ['style-loader', 'css-loader'],
-            include: appPath
-          }
-        ]
+        rules: [{
+          test: /\.(js|jsx)$/,
+          use: [
+            "babel-loader?cacheDirectory",
+            "eslint-loader"
+          ]
+        }, {
+          test: /\.scss$/,
+          use: [
+            "style-loader",
+            "css-loader",
+            "sass-loader"
+          ]
+        }]
       };
 
       module.entry = {
-        style: stylePath
       };
 
       module.devServer = {
@@ -120,7 +114,8 @@ function configSwitch(target) {
 
 const common = {
   entry: {
-    app: './app/index.jsx'
+    app: './app/index.jsx',
+    style: './app/main.scss'
   },
   output: {
     path: buildPath,
@@ -144,7 +139,6 @@ const common = {
 };
 
 const config = merge(common, configSwitch(TARGET));
+console.log(config.module);
 
-module.exports = validate(config, {
-  quiet: true
-});
+module.exports = config;
